@@ -16,10 +16,9 @@
         <nav class="progress-bar">
             <div class="progress-step active" data-step="1">Connect</div>
             <div class="progress-step" data-step="2">Validate</div>
-            <div class="progress-step" data-step="3">Install MQ</div>
-            <div class="progress-step" data-step="4">Configure</div>
-            <div class="progress-step" data-step="5">Test</div>
-            <div class="progress-step" data-step="6">Scripts</div>
+            <div class="progress-step" data-step="3">Download</div>
+            <div class="progress-step" data-step="4">Run Bob</div>
+            <div class="progress-step" data-step="5">Verify</div>
         </nav>
 
         <!-- Overview Section -->
@@ -229,16 +228,14 @@ Are you sure you want to continue connecting (yes/no)?</code></pre>
                 <p>Select all of the output and copy it.</p>
 
                 <h3>4.3 Paste Into Bob With This Prompt</h3>
-                <p>Paste the following message into Bob, with the spec file content appended after it:</p>
+                <p>Paste the following message into Bob, then attach <code>AGENT_TASK_SPEC.md</code> from your downloads folder:</p>
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre><code>You are connected to my LinuxONE VM via a terminal tool.
 Please execute the following agent task specification exactly as written.
-Run each task in order, verify the output matches the acceptance criteria after each task,
+Run each task in @AGENT_TASK_SPEC.md order, verify the output matches the acceptance criteria after each task,
 and do not proceed to the next task until the current one passes.
-When all tasks are complete, run the final verification command and confirm all 4 scripts exist.
-
-[paste the contents of AGENT_TASK_SPEC.md here]</code></pre>
+When all tasks are complete, run the final verification command and confirm all 4 scripts exist.</code></pre>
                 </div>
 
                 <h3>4.4 Monitor Bob's Progress</h3>
@@ -261,7 +258,7 @@ When all tasks are complete, run the final verification command and confirm all 
         </section>
 
         <!-- Step 5: Verify the Output -->
-        <section id="step5-verify" class="section step-section">
+        <section id="step5" class="section step-section">
             <div class="step-header">
                 <span class="step-number">Step 5</span>
                 <h2>Verify Bob's Output <small style="font-size:0.9rem;font-weight:400;color:#525252;">~2 min</small></h2>

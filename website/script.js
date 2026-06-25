@@ -57,11 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     behavior: 'smooth',
                     block: 'start'
                 });
-            } else if (stepNumber === 6) {
-                document.querySelector('#step6').scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
             }
         });
     });
@@ -90,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadBtn = document.createElement('a');
     downloadBtn.textContent = 'Download Agent Spec';
     downloadBtn.className = 'print-btn';
-    downloadBtn.href = '../AGENT_TASK_SPEC.md';
+    downloadBtn.href = 'AGENT_TASK_SPEC.md';
     downloadBtn.download = 'AGENT_TASK_SPEC.md';
     downloadBtn.style.cssText = `
         position: fixed;
@@ -223,7 +218,7 @@ document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
         e.preventDefault();
         const a = document.createElement('a');
-        a.href = '../AGENT_TASK_SPEC.md';
+        a.href = 'AGENT_TASK_SPEC.md';
         a.download = 'AGENT_TASK_SPEC.md';
         a.click();
     }
