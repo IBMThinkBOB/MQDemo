@@ -2,7 +2,7 @@
 
 A comprehensive hands-on demonstration environment for IBM MQ, including:
 - **Local Development**: macOS (Apple Silicon) with Podman
-- **Event Website**: LinuxONE hands-on lab for attendees
+- **Event Website**: [mq-demo.vercel.app](https://mq-demo.vercel.app)
 
 ---
 
