@@ -426,4 +426,3 @@ function showHelp() {
 console.log('LinuxONE IBM MQ Lab - Interactive Guide Loaded');
 console.log('Press Ctrl/Cmd + K to jump to any section');
 
-// Made with Bob

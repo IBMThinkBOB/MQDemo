@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LinuxONE IBM MQ Hands-On Lab</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🚀 LinuxONE IBM MQ Hands-On Lab</h1>
-            <p class="subtitle">Build Your First Enterprise Message Queue on LinuxONE</p>
-        </header>
+    <header>
+        <h1>LinuxONE IBM MQ Hands-On Lab</h1>
+        <p class="subtitle">Build Your First Enterprise Message Queue on LinuxONE</p>
+    </header>
 
+    <div class="container">
         <nav class="progress-bar">
             <div class="progress-step active" data-step="1">Connect</div>
             <div class="progress-step" data-step="2">Validate</div>
@@ -24,7 +24,7 @@
 
         <!-- Overview Section -->
         <section id="overview" class="section">
-            <h2>📋 Lab Overview</h2>
+            <h2>Lab Overview</h2>
             <div class="info-box">
                 <p><strong>Welcome!</strong> In this hands-on lab, you will:</p>
                 <ul>
@@ -43,7 +43,7 @@
 
         <!-- What You'll Receive Section -->
         <section id="receive" class="section">
-            <h2>📦 What You Will Receive</h2>
+            <h2>What You Will Receive</h2>
             <div class="info-box">
                 <p>Each participant receives:</p>
                 <ul>
@@ -54,14 +54,14 @@
                     <li><strong>Root/Sudo Access</strong> - Full administrative privileges</li>
                 </ul>
                 <div class="warning-box">
-                    <strong>⚠️ Important:</strong> Your individual connection details will be sent separately through a secure channel before the event. Keep them confidential!
+                    <strong>Important:</strong> Your individual connection details will be sent separately through a secure channel before the event. Keep them confidential!
                 </div>
             </div>
         </section>
 
         <!-- Prerequisites Section -->
         <section id="prerequisites" class="section">
-            <h2>✅ Before You Begin</h2>
+            <h2>Before You Begin</h2>
             <div class="checklist">
                 <label><input type="checkbox"> Laptop with terminal access</label>
                 <label><input type="checkbox"> SSH client installed (OpenSSH, PuTTY, or similar)</label>
@@ -109,7 +109,7 @@ Are you sure you want to continue connecting (yes/no)?</code></pre>
                 <p>Type <code>yes</code> and press Enter.</p>
 
                 <div class="success-box">
-                    <strong>✅ Success!</strong> You should now see a Linux command prompt like:<br>
+                    <strong>Success!</strong> You should now see a Linux command prompt like:<br>
                     <code>[username@hostname ~]$</code>
                 </div>
             </div>
@@ -159,11 +159,11 @@ Are you sure you want to continue connecting (yes/no)?</code></pre>
                 <p class="expected-output"><strong>Expected:</strong> Successful ping responses</p>
 
                 <div class="success-box">
-                    <strong>✅ Checkpoint:</strong> If all commands succeed, your environment is ready for IBM MQ installation!
+                    <strong>Checkpoint:</strong> If all commands succeed, your environment is ready for IBM MQ installation!
                 </div>
 
                 <div class="warning-box">
-                    <strong>⚠️ Troubleshooting:</strong> If any command fails, contact event support before proceeding.
+                    <strong>Troubleshooting:</strong> If any command fails, contact event support before proceeding.
                 </div>
             </div>
         </section>
@@ -235,7 +235,7 @@ InstPath:    /opt/mqm</pre>
                 </div>
 
                 <div class="success-box">
-                    <strong>✅ Success!</strong> IBM MQ is now installed on your LinuxONE VM!
+                    <strong>Success!</strong> IBM MQ is now installed on your LinuxONE VM!
                 </div>
             </div>
         </section>
@@ -307,7 +307,7 @@ IBM MQ queue manager 'QM1' started.</pre>
                 </div>
 
                 <div class="success-box">
-                    <strong>✅ Success!</strong> Your queue manager QM1 is now running!
+                    <strong>Success!</strong> Your queue manager QM1 is now running!
                 </div>
             </div>
         </section>
@@ -360,13 +360,13 @@ Sample AMQSPUT0 end</pre>
                 <div class="expected-output">
                     <strong>Expected Output:</strong>
                     <pre>Sample AMQSGET0 start
-message <Hello from LinuxONE!>
+message &lt;Hello from LinuxONE!&gt;
 no more messages
 Sample AMQSGET0 end</pre>
                 </div>
 
                 <div class="success-box">
-                    <strong>🎉 Congratulations!</strong> You've successfully sent and received your first message on IBM MQ!
+                    <strong>Congratulations!</strong> You've successfully sent and received your first message on IBM MQ!
                 </div>
             </div>
         </section>
@@ -417,10 +417,10 @@ sudo -u mqm /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1</code></pre>
 
         <!-- Troubleshooting Section -->
         <section id="troubleshooting" class="section">
-            <h2>🔧 Troubleshooting</h2>
+            <h2>Troubleshooting</h2>
             
             <div class="troubleshooting-item">
-                <h3>❌ Cannot connect via SSH</h3>
+                <h3>Cannot connect via SSH</h3>
                 <ul>
                     <li>Verify key file permissions: <code>chmod 600 your-key-file.pem</code></li>
                     <li>Check server IP/hostname is correct</li>
@@ -430,7 +430,7 @@ sudo -u mqm /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1</code></pre>
             </div>
 
             <div class="troubleshooting-item">
-                <h3>❌ Download fails or is very slow</h3>
+                <h3>Download fails or is very slow</h3>
                 <ul>
                     <li>Check internet connectivity: <code>ping ibm.com</code></li>
                     <li>Try alternative download mirror if provided</li>
@@ -439,7 +439,7 @@ sudo -u mqm /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1</code></pre>
             </div>
 
             <div class="troubleshooting-item">
-                <h3>❌ Installation fails</h3>
+                <h3>Installation fails</h3>
                 <ul>
                     <li>Verify sudo access: <code>sudo -v</code></li>
                     <li>Check disk space: <code>df -h</code></li>
@@ -449,7 +449,7 @@ sudo -u mqm /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1</code></pre>
             </div>
 
             <div class="troubleshooting-item">
-                <h3>❌ Queue manager won't start</h3>
+                <h3>Queue manager won't start</h3>
                 <ul>
                     <li>Check if already running: <code>sudo -u mqm dspmq</code></li>
                     <li>View error logs: <code>sudo cat /var/mqm/qmgrs/QM1/errors/AMQERR01.LOG</code></li>
@@ -459,7 +459,7 @@ sudo -u mqm /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1</code></pre>
             </div>
 
             <div class="troubleshooting-item">
-                <h3>❌ Cannot send/receive messages</h3>
+                <h3>Cannot send/receive messages</h3>
                 <ul>
                     <li>Verify queue manager is running: <code>sudo -u mqm dspmq</code></li>
                     <li>Check queue exists: <code>sudo -u mqm bash -c "echo 'DISPLAY QLOCAL(EVENT.Q1)' | runmqsc QM1"</code></li>
@@ -469,7 +469,7 @@ sudo -u mqm /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1</code></pre>
             </div>
 
             <div class="warning-box">
-                <strong>⚠️ Need Help?</strong><br>
+                <strong>Need Help?</strong><br>
                 Contact event support through the designated channel (Teams/Slack) with:
                 <ul>
                     <li>Your username/VM identifier</li>
@@ -482,7 +482,7 @@ sudo -u mqm /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1</code></pre>
 
         <!-- Useful Commands Reference -->
         <section id="reference" class="section">
-            <h2>📚 Quick Reference</h2>
+            <h2>Quick Reference</h2>
             
             <div class="reference-grid">
                 <div class="reference-card">
@@ -545,7 +545,7 @@ df -h</code></pre>
 
         <!-- Next Steps Section -->
         <section id="next-steps" class="section">
-            <h2>🎓 What You've Learned</h2>
+            <h2>What You've Learned</h2>
             <div class="info-box">
                 <h3>Core Concepts</h3>
                 <ul>
