@@ -1,405 +1,181 @@
 # IBM MQ Demo Project
 
-A comprehensive hands-on demonstration environment for IBM MQ, including:
-- **Local Development**: macOS (Apple Silicon) with Podman
-- **Event Website**: [mq-demo.vercel.app](https://mq-demo.vercel.app)
+A hands-on lab environment for IBM MQ running on LinuxONE, guided by an AI agent (Bob).
 
 ---
 
-## 📋 Project Overview
+## Project Overview
 
-This project implements a complete IBM MQ demo environment based on the specifications in [`HandsOnDemoDescription.md`](HandsOnDemoDescription.md:1). The demo teaches participants how to:
+This project delivers a complete IBM MQ lab experience on IBM LinuxONE. Attendees connect to a dedicated VM, download a machine-readable task specification, and give it to Bob. Bob installs IBM MQ, configures the queue manager, and produces 4 management shell scripts as the lab deliverable.
 
-- Set up and configure IBM MQ messaging systems
-- Create and manage queue managers and queues
-- Send and receive messages
-- Troubleshoot common issues using AI assistance (Bob)
-- Build confidence working with enterprise messaging systems
-
-**Target Platform:** macOS with Apple Silicon (M1/M2/M3/M4)  
-**Container Runtime:** Podman  
-**MQ Version:** IBM MQ Advanced for Developers
+**Target Platform:** IBM LinuxONE (s390x)
+**OS:** Linux (native installation, no containers)
+**MQ Version:** IBM MQ Advanced for Developers 9.4
+**Lab Duration:** 20-30 minutes
 
 ---
 
-## 🚀 Quick Start
+## How the Lab Works
 
-**New to this project? Start here:**
-
-1. **Read:** [`QUICKSTART.md`](QUICKSTART.md:1) - Get up and running in 2-3 hours
-2. **Follow:** Step-by-step setup instructions for Apple Silicon Macs
-3. **Test:** Run the basic message flow demo
-4. **Practice:** Try the troubleshooting scenarios
-
-**Already set up?**
-
-```bash
-./start-mq-demo.sh          # Start the environment
-podman exec -it qm1 bash    # Enter container
-amqsput EVENT.Q1 QM1        # Send a message
-amqsget EVENT.Q1 QM1        # Receive a message
-```
+1. Attendee connects to a dedicated LinuxONE VM via SSH
+2. Attendee downloads [`AGENT_TASK_SPEC.md`](AGENT_TASK_SPEC.md) from the lab website
+3. Attendee gives the spec to Bob
+4. Bob executes all tasks autonomously: installs MQ, configures the queue manager, creates the queue, tests message flow, and writes the 4 scripts
+5. Attendee runs two verification commands to confirm completion
 
 ---
 
-## 📚 Documentation
+## Deliverables
 
-### Core Documents
-
-| Document | Purpose | Audience |
-|----------|---------|----------|
-| [`IBM_MQ_HANDS_ON_TUTORIAL.md`](IBM_MQ_HANDS_ON_TUTORIAL.md:1) | **⭐ Complete step-by-step tutorial** | **Everyone - Start here!** |
-| [`website/`](website/) | **🌐 LinuxONE Event Website** | **Event Attendees** |
-| [`QUICKSTART.md`](QUICKSTART.md:1) | Fast setup and daily usage | Everyone |
-| [`MQ_DEMO_IMPLEMENTATION_PLAN.md`](MQ_DEMO_IMPLEMENTATION_PLAN.md:1) | Detailed implementation guide | Implementers |
-| [`DEMO_SCRIPTS_AND_SCENARIOS.md`](DEMO_SCRIPTS_AND_SCENARIOS.md:1) | Scripts and troubleshooting scenarios | Demo presenters |
-| [`HandsOnDemoDescription.md`](HandsOnDemoDescription.md:1) | Demo concept and learning objectives | Stakeholders |
-| [`IBM_MQ_Mac_Podman_Demo_Setup_Guide.md`](IBM_MQ_Mac_Podman_Demo_Setup_Guide.md:1) | Technical reference guide | Engineers |
-
-### Quick Links
-
-- **🎓 New to IBM MQ?** → [`IBM_MQ_HANDS_ON_TUTORIAL.md`](IBM_MQ_HANDS_ON_TUTORIAL.md:1) - **Start here!**
-- **⚡ Quick setup?** → [`QUICKSTART.md`](QUICKSTART.md:1)
-## 🌐 LinuxONE Event Website
-
-A complete, self-contained website for LinuxONE IBM MQ hands-on lab events. Attendees can follow step-by-step instructions to install IBM MQ, configure a queue manager, and test messaging on their dedicated LinuxONE VMs.
-
-### Website Features
-
-- **📱 Responsive Design**: Works on desktop, tablet, and mobile
-- **✅ Interactive Checklists**: Track progress through the lab
-- **📋 Copy Buttons**: One-click copy for all commands
-- **🎯 Progress Bar**: Visual tracking of current step
-- **⌨️ Keyboard Shortcuts**: Quick navigation (Ctrl/Cmd + K)
-- **💾 Auto-Save**: Progress saved to browser localStorage
-- **🖨️ Print-Friendly**: Clean layout for printing
-
-### Quick Deploy
-
-```bash
-# Test locally
-cd website
-python3 -m http.server 8000
-# Open http://localhost:8000
-
-# Or deploy to any static hosting:
-# - GitHub Pages
-# - Netlify
-# - Vercel
-# - AWS S3
-# - Azure Static Web Apps
-```
-
-See [`website/README.md`](website/README.md) for complete deployment instructions and customization options.
-
----
-- **📋 Need detailed steps?** → [`MQ_DEMO_IMPLEMENTATION_PLAN.md`](MQ_DEMO_IMPLEMENTATION_PLAN.md:1)
-- **🎤 Running a demo?** → [`DEMO_SCRIPTS_AND_SCENARIOS.md`](DEMO_SCRIPTS_AND_SCENARIOS.md:1)
-- **🔧 Troubleshooting?** → See troubleshooting sections in any guide
-
----
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────┐
-│         macOS (Apple Silicon)           │
-│                                         │
-│  ┌───────────────────────────────────┐ │
-│  │     Podman Machine (Linux VM)     │ │
-│  │                                   │ │
-│  │  ┌─────────────────────────────┐ │ │
-│  │  │   Container: qm1            │ │ │
-│  │  │                             │ │ │
-│  │  │  ┌───────────────────────┐ │ │ │
-│  │  │  │  Queue Manager: QM1   │ │ │ │
-│  │  │  │                       │ │ │ │
-│  │  │  │  Queue: EVENT.Q1      │ │ │ │
-│  │  │  │  Queue: DEV.QUEUE.1   │ │ │ │
-│  │  │  └───────────────────────┘ │ │ │
-│  │  │                             │ │ │
-│  │  │  Ports: 1414, 9443          │ │ │
-│  │  └─────────────────────────────┘ │ │
-│  │                                   │ │
-│  │  Volume: qm1data (persistent)     │ │
-│  └───────────────────────────────────┘ │
-└─────────────────────────────────────────┘
-```
-
-**Key Components:**
-- **Podman Machine:** Linux VM that runs containers on macOS
-- **Container qm1:** IBM MQ runtime environment
-- **Queue Manager QM1:** Core MQ service managing queues
-- **Queue EVENT.Q1:** Demo queue for message flow testing
-- **Persistent Volume:** Preserves queue manager data across restarts
-
----
-
-## 🎯 Demo Scenarios
-
-The project includes 5 ready-to-use troubleshooting scenarios:
-
-1. **Queue Manager Stopped** - Diagnose and restart a stopped queue manager
-2. **Non-existent Queue** - Handle missing queue errors
-3. **Queue Depth Full** - Manage queue capacity issues
-4. **Permission Issues** - Troubleshoot access problems
-5. **Container Not Running** - Recover from container failures
-
-Each scenario includes:
-- Setup instructions
-- Expected error messages
-- Bob-assisted diagnosis steps
-- Resolution procedures
-
-See [`DEMO_SCRIPTS_AND_SCENARIOS.md`](DEMO_SCRIPTS_AND_SCENARIOS.md:1) for complete details.
-
----
-
-## 🛠️ Helper Scripts
-
-The project includes automation scripts (copy from [`DEMO_SCRIPTS_AND_SCENARIOS.md`](DEMO_SCRIPTS_AND_SCENARIOS.md:1)):
+Bob produces these 4 shell scripts in the attendee's home directory:
 
 | Script | Purpose |
 |--------|---------|
-| `start-mq-demo.sh` | Start the demo environment |
-| `stop-mq-demo.sh` | Stop the demo environment |
-| `verify-mq-demo.sh` | Verify all components are working |
-| `cleanup-mq-demo.sh` | Clean up containers and volumes |
-| `rebuild-mq-demo.sh` | Rebuild from scratch |
+| `start-mq-demo.sh` | Start queue manager QM1 and confirm it is running |
+| `stop-mq-demo.sh` | Gracefully stop queue manager QM1 |
+| `cleanup-mq-demo.sh` | Delete the queue manager and all data (with confirmation prompt) |
+| `check-build-status.sh` | Show MQ version, queue manager status, queue depth, and disk usage |
 
 ---
 
-## 📊 Success Criteria
+## Architecture
 
-The demo environment is ready when:
+```
+Attendee Laptop
+  └── SSH connection
+        └── LinuxONE VM (s390x)
+              └── Linux OS
+                    └── IBM MQ 9.4 (native install, /opt/mqm)
+                          └── Queue Manager: QM1
+                                └── Queue: EVENT.Q1
+```
 
-✅ **Infrastructure:**
-- Podman installed and running
-- Podman machine operational
-- IBM MQ image built for arm64
+Key components:
 
-✅ **MQ Components:**
-- Queue manager `QM1` running
-- Queue `EVENT.Q1` created
-- Message put/get working
-
-✅ **Demo Readiness:**
-- Web console accessible at `https://localhost:9443`
-- Troubleshooting scenarios documented
-- Helper scripts created
+- **LinuxONE VM** — dedicated per attendee, cloned from a common baseline image
+- **IBM MQ** — installed natively on Linux during the lab (not containerised)
+- **Queue Manager QM1** — the core MQ service that owns queues and routes messages
+- **Queue EVENT.Q1** — local queue used for message flow testing
+- **MQ data directory** — `/var/mqm`, owned by the `mqm` system user
 
 ---
 
-## 🔧 Common Commands
+## Repository Structure
 
-### Daily Operations
-```bash
-# Start environment
-./start-mq-demo.sh
-
-# Enter container
-podman exec -it qm1 bash
-
-# Check queue manager
-dspmq
-
-# Send message
-amqsput EVENT.Q1 QM1
-
-# Receive message
-amqsget EVENT.Q1 QM1
-
-# Stop environment
-./stop-mq-demo.sh
-```
-
-### Troubleshooting
-```bash
-# View logs
-podman logs qm1
-
-# Check container status
-podman ps -a
-
-# Restart container
-podman restart qm1
-
-# Verify environment
-./verify-mq-demo.sh
-```
+| File / Directory | Purpose |
+|------------------|---------|
+| [`AGENT_TASK_SPEC.md`](AGENT_TASK_SPEC.md) | Machine-readable task specification given to Bob |
+| [`website/`](website/) | Lab website served to attendees |
+| [`website/index.html`](website/index.html) | Main attendee-facing lab guide |
+| [`HandsOnDemoDescription.md`](HandsOnDemoDescription.md) | Original demo concept and learning objectives |
+| [`IBM_MQ_HANDS_ON_TUTORIAL.md`](IBM_MQ_HANDS_ON_TUTORIAL.md) | Reference tutorial (human-readable, macOS/Podman version) |
+| [`start-mq-demo.sh`](start-mq-demo.sh) | Reference copy of the start script |
+| [`stop-mq-demo.sh`](stop-mq-demo.sh) | Reference copy of the stop script |
+| [`cleanup-mq-demo.sh`](cleanup-mq-demo.sh) | Reference copy of the cleanup script |
+| [`check-build-status.sh`](check-build-status.sh) | Reference copy of the status script |
 
 ---
 
-## 📖 Learning Path
+## Agent Task Specification
 
-### For New Users
+[`AGENT_TASK_SPEC.md`](AGENT_TASK_SPEC.md) is the core document that drives the lab. It is structured for machine execution, not human reading. It contains:
 
-1. **Understand the Concept** - Read [`HandsOnDemoDescription.md`](HandsOnDemoDescription.md:1)
-2. **Set Up Environment** - Follow [`QUICKSTART.md`](QUICKSTART.md:1)
-3. **Test Basic Flow** - Send and receive your first message
-4. **Try Scenarios** - Practice troubleshooting with Bob
-5. **Present Demo** - Use the demo flow script
-
-### For Implementers
-
-1. **Review Architecture** - Understand the technical setup
-2. **Follow Implementation Plan** - Use [`MQ_DEMO_IMPLEMENTATION_PLAN.md`](MQ_DEMO_IMPLEMENTATION_PLAN.md:1)
-3. **Build Environment** - Complete all 8 phases
-4. **Validate Setup** - Run acceptance checklist
-5. **Create Scripts** - Set up automation
-
-### For Presenters
-
-1. **Practice Demo Flow** - Run through scenarios multiple times
-2. **Time Each Section** - Know your pacing
-3. **Prepare Bob Examples** - Have AI assistance ready
-4. **Test Failures** - Ensure scenarios work reliably
-5. **Have Backups** - Prepare alternative scenarios
+- Environment constants (OS, MQ version, queue manager name, queue name, paths)
+- 7 ordered tasks, each with exact commands and acceptance criteria
+- Exact expected output strings the agent must match before advancing
+- Per-task error recovery instructions
+- Exact script content Bob must write verbatim to disk
+- Per-script test commands and expected output
+- A final verification task confirming all 4 deliverables exist and are executable
 
 ---
 
-## 🎓 Demo Flow (20 Minutes)
+## Lab Website
 
-**Part 1: Introduction (5 min)**
-- Show environment and components
-- Explain queue manager and queues
-- Demonstrate basic concepts
+The attendee-facing website lives in [`website/`](website/). It guides attendees through 5 steps:
 
-**Part 2: Happy Path (5 min)**
-- Create queue
-- Send message
-- Receive message
-- Validate end-to-end flow
+1. Connect to your LinuxONE VM (~3 min)
+2. Validate your environment (~2 min)
+3. Download the Agent Task Specification (~1 min)
+4. Give the spec to Bob and let it run (~20 min)
+5. Verify Bob's output (~2 min)
 
-**Part 3: Introduce Failure (2 min)**
-- Stop queue manager
-- Attempt to send message
-- Observe error
+The website includes a "Download Agent Spec" button (bottom-right) that downloads [`AGENT_TASK_SPEC.md`](AGENT_TASK_SPEC.md) directly to the attendee's laptop.
 
-**Part 4: Troubleshoot with Bob (5 min)**
-- Describe error to Bob
-- Follow Bob's diagnostic steps
-- Apply Bob's solution
+### Run the Website Locally
 
-**Part 5: Validate Fix (3 min)**
-- Restart queue manager
-- Retry message flow
-- Confirm resolution
-
----
-
-## 🔍 Troubleshooting
-
-### Quick Fixes
-
-**Container won't start:**
 ```bash
-podman machine start
-podman start qm1
-```
-
-**Queue manager not running:**
-```bash
-podman exec -it qm1 bash
-strmqm QM1
-```
-
-**Queue doesn't exist:**
-```bash
-podman exec -it qm1 bash
-echo "DEFINE QLOCAL('EVENT.Q1') REPLACE" | runmqsc QM1
-```
-
-**Complete reset:**
-```bash
-./cleanup-mq-demo.sh
-./rebuild-mq-demo.sh
+cd website
+python3 -m http.server 8000
+# Open http://localhost:8000
 ```
 
 ---
 
-## 📦 Requirements
+## MQ Concepts Demonstrated
 
-### System Requirements
-- macOS with Apple Silicon (M1/M2/M3/M4)
-- 10GB free disk space
-- 4GB RAM minimum (8GB recommended)
-- Internet connection for initial setup
-
-### Software Requirements
-- Podman (installed via Homebrew or official installer)
-- Git (usually pre-installed with Xcode Command Line Tools)
-- GNU Make (installed via Homebrew if needed)
-
-### Time Requirements
-- Initial setup: 2-3 hours
-- Daily startup: 2-3 minutes
-- Demo duration: 5-20 minutes
+| Concept | Description |
+|---------|-------------|
+| Queue Manager | Central MQ service that owns queues and routes messages |
+| Local Queue | Named storage for messages (EVENT.Q1) |
+| PUT | Placing a message on a queue (amqsput) |
+| GET | Retrieving and removing a message from a queue (amqsget) |
+| BROWSE | Reading a message without removing it (amqsbcg) |
+| FIFO | Messages are delivered in the order they were sent |
+| Persistence | Messages are written to disk and survive restarts |
 
 ---
 
-## 🤝 Contributing
+## Common Commands (Reference)
 
-This is a demo project. To improve it:
+```bash
+# Check queue manager status
+sudo -u mqm dspmq
 
-1. Test the setup on your Mac
-2. Document any issues or improvements
-3. Suggest additional troubleshooting scenarios
-4. Share your demo experiences
+# Start queue manager
+sudo -u mqm strmqm QM1
+
+# Stop queue manager
+sudo -u mqm endmqm QM1
+
+# Create a queue
+sudo -u mqm bash -c "echo 'DEFINE QLOCAL(EVENT.Q1) REPLACE' | runmqsc QM1"
+
+# Send a message
+echo "Hello" | sudo -u mqm /opt/mqm/samp/bin/amqsput EVENT.Q1 QM1
+
+# Receive a message
+sudo -u mqm /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1
+
+# Check queue depth
+sudo -u mqm bash -c "echo 'DISPLAY QLOCAL(EVENT.Q1) CURDEPTH' | runmqsc QM1"
+
+# Check MQ version
+dspmqver
+```
 
 ---
 
-## 📝 Notes
+## Success Criteria
 
-- **Architecture-specific:** This setup is for Apple Silicon Macs. Intel Macs use a different image (see [`IBM_MQ_Mac_Podman_Demo_Setup_Guide.md`](IBM_MQ_Mac_Podman_Demo_Setup_Guide.md:230-251))
-- **Container-based:** MQ runs in a container, not natively on macOS
-- **Development only:** This uses IBM MQ Advanced for Developers (not for production)
-- **Persistent data:** Queue manager data survives container restarts via volume mount
+The lab is complete when:
+
+- IBM MQ 9.4 is installed and `dspmqver` shows the correct version
+- Queue manager QM1 shows `STATUS(Running)`
+- Queue EVENT.Q1 exists and message send/receive works
+- All 4 scripts exist in the home directory with `-rwxr-xr-x` permissions
+- `check-build-status.sh` output matches the expected pattern in the spec
 
 ---
 
-## 🔗 Resources
+## Resources
 
-### IBM Documentation
 - [IBM MQ Documentation](https://www.ibm.com/docs/en/ibm-mq)
-- [IBM MQ Container Repository](https://github.com/ibm-messaging/mq-container)
-- [IBM Developer - MQ on macOS](https://developer.ibm.com/tutorials/mq-macos-dev/)
-
-### Podman Documentation
-- [Podman Official Site](https://podman.io/)
-- [Podman Machine Documentation](https://docs.podman.io/en/latest/markdown/podman-machine.1.html)
-
-### Project Documentation
-- All documentation is in this repository
-- Start with [`QUICKSTART.md`](QUICKSTART.md:1)
-- Refer to [`MQ_DEMO_IMPLEMENTATION_PLAN.md`](MQ_DEMO_IMPLEMENTATION_PLAN.md:1) for details
+- [IBM MQ Developer Hub](https://developer.ibm.com/components/ibm-mq/)
+- [LinuxONE](https://www.ibm.com/linuxone)
 
 ---
 
-## 📅 Project Status
-
-**Current Phase:** Planning Complete ✅
-
-**Next Steps:**
-1. Begin implementation following [`QUICKSTART.md`](QUICKSTART.md:1)
-2. Complete Phase 1-8 of [`MQ_DEMO_IMPLEMENTATION_PLAN.md`](MQ_DEMO_IMPLEMENTATION_PLAN.md:1)
-3. Test all troubleshooting scenarios
-4. Practice demo presentation
-5. Prepare Bob integration examples
-
----
-
-## 📞 Support
-
-For issues during setup:
-1. Check the troubleshooting sections in documentation
-2. Review `podman logs qm1` for container issues
-3. Run `./verify-mq-demo.sh` to check environment
-4. Consult the detailed implementation plan
-
----
-
-**Project Created:** 2026-06-22  
-**Target Platform:** macOS Apple Silicon  
-**Status:** Ready for Implementation  
-**Estimated Setup Time:** 2-3 hours
+**Target Platform:** IBM LinuxONE (s390x)
+**Lab Duration:** 20-30 minutes
+**Agent:** Bob
