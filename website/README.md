@@ -4,6 +4,7 @@
 
 This is a self-contained, interactive website for the LinuxONE IBM MQ hands-on lab event. Attendees can follow step-by-step instructions to install IBM MQ, configure a queue manager, and test messaging on their dedicated LinuxONE VMs.
 
+
 ## Features
 
 ### 🎯 Complete Step-by-Step Guide

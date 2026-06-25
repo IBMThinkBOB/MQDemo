@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LinuxONE IBM MQ Hands-On Lab</title>
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
     <header>
@@ -19,25 +19,24 @@
             <div class="progress-step" data-step="3">Install MQ</div>
             <div class="progress-step" data-step="4">Configure</div>
             <div class="progress-step" data-step="5">Test</div>
-            <div class="progress-step" data-step="6">Complete</div>
+            <div class="progress-step" data-step="6">Scripts</div>
         </nav>
 
         <!-- Overview Section -->
         <section id="overview" class="section">
             <h2>Lab Overview</h2>
             <div class="info-box">
-                <p><strong>Welcome!</strong> In this hands-on lab, you will:</p>
+                <p><strong>What you are doing:</strong> In this lab you will connect to a dedicated LinuxONE VM, download a task specification file, and feed it into an AI agent (Bob). The agent will execute every step and produce the following 4 shell scripts as its output:</p>
                 <ul>
-                    <li>Connect to your dedicated LinuxONE virtual machine</li>
-                    <li>Download and install IBM MQ Advanced for Developers</li>
-                    <li>Create and configure a queue manager</li>
-                    <li>Define a message queue</li>
-                    <li>Send and receive your first message</li>
-                    <li>Validate a working enterprise messaging system</li>
+                    <li><strong>start-mq-demo.sh</strong> — starts IBM MQ and confirms it is running</li>
+                    <li><strong>stop-mq-demo.sh</strong> — gracefully stops IBM MQ</li>
+                    <li><strong>cleanup-mq-demo.sh</strong> — removes all queue manager data for a clean reset</li>
+                    <li><strong>check-build-status.sh</strong> — shows the full state of your MQ environment at a glance</li>
                 </ul>
-                <p><strong>Time Required:</strong> 45-60 minutes<br>
+                <p><strong>Your job is not to run the commands yourself.</strong> Your job is to connect to your VM, download the spec, give it to Bob, and verify the 4 scripts appear with the correct output. Bob does the rest.</p>
+                <p><strong>Time Required:</strong> 20–30 minutes<br>
                 <strong>Difficulty:</strong> Beginner-friendly<br>
-                <strong>Prerequisites:</strong> Basic Linux command-line knowledge</p>
+                <strong>Prerequisites:</strong> SSH access to your VM and access to Bob</p>
             </div>
         </section>
 
@@ -45,16 +44,16 @@
         <section id="receive" class="section">
             <h2>What You Will Receive</h2>
             <div class="info-box">
-                <p>Each participant receives:</p>
+                <p>Each participant receives a dedicated environment to work in:</p>
                 <ul>
-                    <li><strong>Dedicated LinuxONE VM</strong> - Your own isolated environment</li>
-                    <li><strong>Server Address</strong> - Unique IP or hostname</li>
-                    <li><strong>Username</strong> - Your login credentials</li>
-                    <li><strong>SSH Key Pair</strong> - Secure authentication</li>
-                    <li><strong>Root/Sudo Access</strong> - Full administrative privileges</li>
+                    <li><strong>Dedicated LinuxONE VM</strong> — your own isolated server, nobody else shares it</li>
+                    <li><strong>Server Address</strong> — a unique IP or hostname that belongs to your VM only</li>
+                    <li><strong>Username</strong> — your login account on that VM</li>
+                    <li><strong>SSH Key Pair</strong> — a private key file you use instead of a password</li>
+                    <li><strong>Sudo Access</strong> — permission to run installation commands as administrator</li>
                 </ul>
                 <div class="warning-box">
-                    <strong>Important:</strong> Your individual connection details will be sent separately through a secure channel before the event. Keep them confidential!
+                    <strong>Important:</strong> Your individual connection details will be sent separately through a secure channel before the event. Do not share them with other participants.
                 </div>
             </div>
         </section>
@@ -62,13 +61,14 @@
         <!-- Prerequisites Section -->
         <section id="prerequisites" class="section">
             <h2>Before You Begin</h2>
+            <p>Confirm each of the following before the event starts. If any item is missing, contact event support early — these cannot be resolved quickly during the lab itself.</p>
             <div class="checklist">
-                <label><input type="checkbox"> Laptop with terminal access</label>
-                <label><input type="checkbox"> SSH client installed (OpenSSH, PuTTY, or similar)</label>
-                <label><input type="checkbox"> Your SSH key file downloaded and saved</label>
+                <label><input type="checkbox"> Laptop with a terminal application open and ready</label>
+                <label><input type="checkbox"> SSH client installed (macOS/Linux: built-in terminal. Windows: PowerShell or Windows Terminal)</label>
+                <label><input type="checkbox"> Your SSH key file downloaded and saved to your laptop</label>
                 <label><input type="checkbox"> Stable internet connection</label>
-                <label><input type="checkbox"> VPN access configured (if required by your organization)</label>
-                <label><input type="checkbox"> Access to event support channel (Teams/Slack)</label>
+                <label><input type="checkbox"> VPN access configured and connected (if required by your organization)</label>
+                <label><input type="checkbox"> Access to the event support channel (Teams/Slack)</label>
             </div>
         </section>
 
@@ -76,41 +76,48 @@
         <section id="step1" class="section step-section">
             <div class="step-header">
                 <span class="step-number">Step 1</span>
-                <h2>Connect to Your LinuxONE VM</h2>
+                <h2>Connect to Your LinuxONE VM <small style="font-size:0.9rem;font-weight:400;color:#525252;">~3 min</small></h2>
             </div>
-            
+            <div class="info-box">
+                <p><strong>What you are doing in this step:</strong> Opening a terminal connection to your remote LinuxONE server. This is the only technical prerequisite before handing off to Bob.</p>
+            </div>
+
             <div class="step-content">
+                <p>Your VM is a Linux server running on IBM LinuxONE hardware. You access it over the internet using SSH — a secure, encrypted terminal connection. Think of it as opening a command prompt that runs directly on your remote server.</p>
+
                 <h3>1.1 Prepare Your SSH Key</h3>
-                <p>First, set the correct permissions on your SSH key file:</p>
+                <p>SSH keys work like a lock and key. The server holds the lock (your public key), and your laptop holds the key (your private key file). Before SSH will use your key file, you must restrict its permissions so only you can read it. This is a security requirement — SSH will refuse to connect if the key file is too permissive.</p>
+                <p><strong>Run this command, replacing the path with the actual location of your key file:</strong></p>
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre><code>chmod 600 /path/to/your-key-file.pem</code></pre>
                 </div>
-                <p class="note"><strong>Note:</strong> Replace <code>/path/to/your-key-file.pem</code> with the actual path to your downloaded key file.</p>
+                <p class="note"><strong>What this does:</strong> <code>chmod 600</code> sets the file to be readable and writable by you only. No other user on your laptop can access it.</p>
 
                 <h3>1.2 Connect via SSH</h3>
-                <p>Use the following command pattern with your personalized details:</p>
+                <p>Now use your key file to connect. Replace the placeholders with the values from your secure connection details email:</p>
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre><code>ssh -i /path/to/your-key-file.pem username@your-server-ip</code></pre>
                 </div>
-                
                 <div class="info-box">
-                    <p><strong>Example:</strong></p>
+                    <p><strong>Example of what a real command looks like:</strong></p>
                     <code>ssh -i ~/.ssh/linuxone-lab.pem student01@192.168.1.100</code>
+                    <p style="margin-top:8px">The <code>-i</code> flag tells SSH which key file to use. <code>student01</code> is the username. <code>192.168.1.100</code> is the server address. Yours will differ.</p>
                 </div>
 
-                <h3>1.3 First Connection</h3>
-                <p>On your first connection, you may see a host key verification prompt:</p>
+                <h3>1.3 Accept the Host Fingerprint</h3>
+                <p>On your very first connection, SSH does not yet know this server. It will ask you to confirm its identity:</p>
                 <div class="code-block">
                     <pre><code>The authenticity of host '192.168.1.100' can't be established.
 Are you sure you want to continue connecting (yes/no)?</code></pre>
                 </div>
-                <p>Type <code>yes</code> and press Enter.</p>
+                <p>Type <code>yes</code> and press Enter. SSH will save the server's fingerprint so it does not ask again.</p>
 
                 <div class="success-box">
-                    <strong>Success!</strong> You should now see a Linux command prompt like:<br>
-                    <code>[username@hostname ~]$</code>
+                    <strong>You are connected when you see a prompt like this:</strong><br>
+                    <code>[username@hostname ~]$</code><br>
+                    <span style="font-size:0.9rem">Everything you type from now on runs on the LinuxONE VM, not your laptop.</span>
                 </div>
             </div>
         </section>
@@ -119,298 +126,203 @@ Are you sure you want to continue connecting (yes/no)?</code></pre>
         <section id="step2" class="section step-section">
             <div class="step-header">
                 <span class="step-number">Step 2</span>
-                <h2>Validate Your Environment</h2>
+                <h2>Validate Your Environment <small style="font-size:0.9rem;font-weight:400;color:#525252;">~2 min</small></h2>
             </div>
-            
+
             <div class="step-content">
-                <h3>2.1 Verify System Information</h3>
-                <p>Run these commands to confirm you're on the correct system:</p>
-                
+                <div class="info-box">
+                    <p><strong>What you are doing in this step:</strong> Running 4 quick checks to confirm the VM is correct and Bob will have everything it needs. These take under 1 minute. Do not skip — if any check fails, Bob cannot complete the lab.</p>
+                </div>
+
+                <h3>2.1 Confirm You Are on the Right Machine</h3>
+                <p>Run each command and compare your output to the expected result:</p>
+
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre><code>hostname</code></pre>
                 </div>
-                <p class="expected-output"><strong>Expected:</strong> Your VM's hostname</p>
+                <p class="expected-output"><strong>Expected:</strong> The hostname of your VM (matches what is in your connection details)</p>
 
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre><code>uname -a</code></pre>
                 </div>
-                <p class="expected-output"><strong>Expected:</strong> Linux system information showing s390x architecture</p>
+                <p class="expected-output"><strong>Expected:</strong> A line containing <code>s390x</code> — this confirms you are on LinuxONE hardware, not an x86 machine</p>
 
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre><code>whoami</code></pre>
                 </div>
-                <p class="expected-output"><strong>Expected:</strong> Your username</p>
+                <p class="expected-output"><strong>Expected:</strong> Your username (e.g. <code>student01</code>)</p>
 
-                <h3>2.2 Verify Sudo Access</h3>
+                <h3>2.2 Confirm You Have Installation Privileges</h3>
+                <p>IBM MQ installation requires administrator-level access. The <code>sudo</code> command grants that. Run this to confirm it works for your account:</p>
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre><code>sudo -v</code></pre>
                 </div>
-                <p class="expected-output"><strong>Expected:</strong> No errors (may prompt for password)</p>
+                <p class="expected-output"><strong>Expected:</strong> No error. It may ask for your password — that is normal. If you see "Sorry, user ... may not run sudo", stop and contact event support immediately before continuing.</p>
 
-                <h3>2.3 Check Internet Connectivity</h3>
+                <h3>2.3 Confirm the VM Can Reach the Internet</h3>
+                <p>The MQ installer will be downloaded from IBM's servers. Confirm connectivity now:</p>
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre><code>ping -c 3 ibm.com</code></pre>
                 </div>
-                <p class="expected-output"><strong>Expected:</strong> Successful ping responses</p>
+                <p class="expected-output"><strong>Expected:</strong> 3 lines showing <code>bytes from</code> with round-trip times. If you see 100% packet loss, your VM may not have outbound internet access — contact your facilitator.</p>
 
                 <div class="success-box">
-                    <strong>Checkpoint:</strong> If all commands succeed, your environment is ready for IBM MQ installation!
+                    <strong>Checkpoint:</strong> All three commands gave expected output? Your environment is ready. Move to Step 3.
                 </div>
 
                 <div class="warning-box">
-                    <strong>Troubleshooting:</strong> If any command fails, contact event support before proceeding.
+                    <strong>If anything failed:</strong> Do not proceed. Contact event support with the exact command you ran and the exact error output. This is much easier to fix now than mid-installation.
                 </div>
             </div>
         </section>
 
-        <!-- Step 3: Install IBM MQ -->
+        <!-- Step 3: Download the Agent Task Spec -->
         <section id="step3" class="section step-section">
             <div class="step-header">
                 <span class="step-number">Step 3</span>
-                <h2>Download and Install IBM MQ</h2>
+                <h2>Download the Agent Task Specification <small style="font-size:0.9rem;font-weight:400;color:#525252;">~1 min</small></h2>
             </div>
-            
+
             <div class="step-content">
-                <h3>3.1 Create Working Directory</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>mkdir -p ~/mq-install
-cd ~/mq-install</code></pre>
+                <div class="info-box">
+                    <p><strong>What you are doing in this step:</strong> Saving the task specification file to your local machine so you can give it to Bob in Step 4.</p>
                 </div>
 
-                <h3>3.2 Download IBM MQ Advanced for Developers</h3>
-                <p>Download the latest IBM MQ for Linux on s390x:</p>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code># Download IBM MQ 9.4 for Linux s390x
-wget https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/messaging/mqadv/mqadv_dev94_linux_s390x.tar.gz</code></pre>
-                </div>
-                <p class="note"><strong>Note:</strong> This download is approximately 500MB and may take a few minutes.</p>
-
-                <h3>3.3 Extract the Archive</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>tar -xzf mqadv_dev94_linux_s390x.tar.gz</code></pre>
-                </div>
-
-                <h3>3.4 Accept the License</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>cd MQServer
-sudo ./mqlicense.sh -accept</code></pre>
-                </div>
-
-                <h3>3.5 Install IBM MQ</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code># Install all MQ components
-sudo rpm -ivh MQSeries*.rpm</code></pre>
-                </div>
-                <p class="note"><strong>Note:</strong> Installation takes 2-3 minutes. You'll see progress for each component.</p>
-
-                <h3>3.6 Set Up MQ Environment</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code># Add MQ to your PATH
-echo 'export PATH=$PATH:/opt/mqm/bin' >> ~/.bashrc
-source ~/.bashrc</code></pre>
-                </div>
-
-                <h3>3.7 Verify Installation</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>dspmqver</code></pre>
-                </div>
-                <div class="expected-output">
-                    <strong>Expected Output:</strong>
-                    <pre>Name:        IBM MQ
-Version:     9.4.0.0
-...
-InstPath:    /opt/mqm</pre>
-                </div>
+                <p>Click the <strong>Download Agent Spec</strong> button at the bottom-right of this page. The file <code>AGENT_TASK_SPEC.md</code> will be saved to your local downloads folder. That is all — no commands needed.</p>
 
                 <div class="success-box">
-                    <strong>Success!</strong> IBM MQ is now installed on your LinuxONE VM!
+                    <strong>Ready.</strong> File downloaded to your laptop. Move to Step 4 to give it to Bob.
                 </div>
             </div>
         </section>
 
-        <!-- Step 4: Configure Queue Manager -->
+        <!-- Step 4 placeholder — renumbered below -->
+        <section id="step4-old" class="section step-section" style="display:none"></section>
+        <section id="step4-old2" class="section step-section" style="display:none"></section>
+
+        <!-- Step 4: Give the Spec to Bob -->
         <section id="step4" class="section step-section">
             <div class="step-header">
                 <span class="step-number">Step 4</span>
-                <h2>Create and Configure Queue Manager</h2>
+                <h2>Give the Spec to Bob and Let It Run <small style="font-size:0.9rem;font-weight:400;color:#525252;">~20 min</small></h2>
             </div>
-            
+
             <div class="step-content">
-                <h3>4.1 Create MQ User and Group</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code># Create mqm group and user
-sudo groupadd mqm
-sudo useradd -g mqm -d /var/mqm mqm
-sudo passwd mqm</code></pre>
-                </div>
-                <p class="note"><strong>Note:</strong> Set a password when prompted (e.g., "mqm123")</p>
-
-                <h3>4.2 Add Your User to MQ Group</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>sudo usermod -a -G mqm $USER</code></pre>
+                <div class="info-box">
+                    <p><strong>What you are doing in this step:</strong> Opening Bob, pasting the contents of the spec file as your prompt, and letting Bob execute the lab autonomously. You do not type any further commands yourself — Bob handles everything.</p>
                 </div>
 
-                <h3>4.3 Set MQ Permissions</h3>
+                <h3>4.1 Open Bob</h3>
+                <p>Open the Bob AI agent interface in your browser or terminal. Your facilitator will provide the access URL or launch command for your event.</p>
+
+                <h3>4.2 Read the Spec into Your Clipboard</h3>
+                <p>On your LinuxONE VM, print the spec so you can copy it:</p>
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>sudo chown -R mqm:mqm /var/mqm
-sudo chmod -R 775 /var/mqm</code></pre>
+                    <pre><code>cat ~/AGENT_TASK_SPEC.md</code></pre>
+                </div>
+                <p>Select all of the output and copy it.</p>
+
+                <h3>4.3 Paste Into Bob With This Prompt</h3>
+                <p>Paste the following message into Bob, with the spec file content appended after it:</p>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code>You are connected to my LinuxONE VM via a terminal tool.
+Please execute the following agent task specification exactly as written.
+Run each task in order, verify the output matches the acceptance criteria after each task,
+and do not proceed to the next task until the current one passes.
+When all tasks are complete, run the final verification command and confirm all 4 scripts exist.
+
+[paste the contents of AGENT_TASK_SPEC.md here]</code></pre>
                 </div>
 
-                <h3>4.4 Create Queue Manager</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>sudo -u mqm crtmqm QM1</code></pre>
-                </div>
-                <div class="expected-output">
-                    <strong>Expected Output:</strong>
-                    <pre>IBM MQ queue manager created.
-Directory '/var/mqm/qmgrs/QM1' created.
-...
-IBM MQ queue manager 'QM1' created.</pre>
-                </div>
-
-                <h3>4.5 Start Queue Manager</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>sudo -u mqm strmqm QM1</code></pre>
-                </div>
-                <div class="expected-output">
-                    <strong>Expected Output:</strong>
-                    <pre>IBM MQ queue manager 'QM1' starting.
-...
-IBM MQ queue manager 'QM1' started.</pre>
-                </div>
-
-                <h3>4.6 Verify Queue Manager Status</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>sudo -u mqm dspmq</code></pre>
-                </div>
-                <div class="expected-output">
-                    <strong>Expected Output:</strong>
-                    <pre>QMNAME(QM1)                                               STATUS(Running)</pre>
+                <h3>4.4 Monitor Bob's Progress</h3>
+                <p>Bob will work through each task sequentially. You will see it:</p>
+                <ul>
+                    <li>Run each command</li>
+                    <li>Check each output against the acceptance criteria</li>
+                    <li>Write each of the 4 script files</li>
+                    <li>Test each script after writing it</li>
+                    <li>Run the final verification</li>
+                </ul>
+                <div class="warning-box">
+                    <strong>Do not interrupt Bob mid-task.</strong> If Bob asks you a clarifying question, answer it. If Bob reports an error it cannot resolve, note the error and contact your facilitator.
                 </div>
 
                 <div class="success-box">
-                    <strong>Success!</strong> Your queue manager QM1 is now running!
+                    <strong>Bob is done when it reports all 4 scripts exist and check-build-status.sh output matches the expected pattern.</strong>
                 </div>
             </div>
         </section>
 
-        <!-- Step 5: Create Queue and Test Messaging -->
-        <section id="step5" class="section step-section">
+        <!-- Step 5: Verify the Output -->
+        <section id="step5-verify" class="section step-section">
             <div class="step-header">
                 <span class="step-number">Step 5</span>
-                <h2>Create Queue and Test Messaging</h2>
+                <h2>Verify Bob's Output <small style="font-size:0.9rem;font-weight:400;color:#525252;">~2 min</small></h2>
             </div>
-            
+
             <div class="step-content">
-                <h3>5.1 Create a Local Queue</h3>
+                <div class="info-box">
+                    <p><strong>What you are doing in this step:</strong> Running two commands yourself to independently confirm that Bob produced the correct output. This is your sign-off that the lab is complete.</p>
+                </div>
+
+                <h3>5.1 Confirm All 4 Scripts Exist and Are Executable</h3>
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>sudo -u mqm bash -c "echo 'DEFINE QLOCAL(EVENT.Q1) REPLACE' | runmqsc QM1"</code></pre>
+                    <pre><code>ls -lh ~/start-mq-demo.sh ~/stop-mq-demo.sh ~/cleanup-mq-demo.sh ~/check-build-status.sh</code></pre>
                 </div>
                 <div class="expected-output">
-                    <strong>Expected Output:</strong>
-                    <pre>5724-H72 (C) Copyright IBM Corp. 1994, 2024.
-Starting MQSC for queue manager QM1.
-
-     1 : DEFINE QLOCAL(EVENT.Q1) REPLACE
-AMQ8006I: IBM MQ queue created.</pre>
+                    <strong>Expected:</strong> All 4 files listed. Permissions column starts with <code>-rwxr-xr-x</code> for each.
+                    <pre>-rwxr-xr-x ... start-mq-demo.sh
+-rwxr-xr-x ... stop-mq-demo.sh
+-rwxr-xr-x ... cleanup-mq-demo.sh
+-rwxr-xr-x ... check-build-status.sh</pre>
                 </div>
 
-                <h3>5.2 Verify Queue Exists</h3>
+                <h3>5.2 Run the Status Check</h3>
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>sudo -u mqm bash -c "echo 'DISPLAY QLOCAL(EVENT.Q1)' | runmqsc QM1"</code></pre>
-                </div>
-
-                <h3>5.3 Send Your First Message</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>echo "Hello from LinuxONE!" | sudo -u mqm /opt/mqm/samp/bin/amqsput EVENT.Q1 QM1</code></pre>
+                    <pre><code>~/check-build-status.sh</code></pre>
                 </div>
                 <div class="expected-output">
-                    <strong>Expected Output:</strong>
-                    <pre>Sample AMQSPUT0 start
-target queue is EVENT.Q1
-Sample AMQSPUT0 end</pre>
-                </div>
+                    <strong>Expected output must show all of these:</strong>
+                    <pre>=== IBM MQ Status ===
 
-                <h3>5.4 Receive the Message</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>sudo -u mqm /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1</code></pre>
-                </div>
-                <div class="expected-output">
-                    <strong>Expected Output:</strong>
-                    <pre>Sample AMQSGET0 start
-message &lt;Hello from LinuxONE!&gt;
-no more messages
-Sample AMQSGET0 end</pre>
+--- MQ Version ---
+Name:        IBM MQ
+Version:     9.4.0.0
+InstPath:    /opt/mqm
+
+--- Queue Manager Status ---
+QMNAME(QM1)                                               STATUS(Running)
+
+--- Queue Depth: EVENT.Q1 ---
+  QUEUE(EVENT.Q1)
+  CURDEPTH(0)
+
+--- Disk Usage ---
+...</pre>
                 </div>
 
                 <div class="success-box">
-                    <strong>Congratulations!</strong> You've successfully sent and received your first message on IBM MQ!
+                    <strong>Lab Complete!</strong> Bob has installed IBM MQ on LinuxONE, created queue manager QM1, created queue EVENT.Q1, and produced all 4 management scripts. The output matches the specification exactly.
                 </div>
-            </div>
-        </section>
 
-        <!-- Step 6: Validation and Experiments -->
-        <section id="step6" class="section step-section">
-            <div class="step-header">
-                <span class="step-number">Step 6</span>
-                <h2>Validation and Experiments</h2>
-            </div>
-            
-            <div class="step-content">
-                <h3>6.1 Final Validation Checklist</h3>
+                <h3>Final Checklist</h3>
                 <div class="checklist">
-                    <label><input type="checkbox"> Queue manager QM1 is running</label>
-                    <label><input type="checkbox"> Queue EVENT.Q1 exists</label>
-                    <label><input type="checkbox"> Can send messages successfully</label>
-                    <label><input type="checkbox"> Can receive messages successfully</label>
-                    <label><input type="checkbox"> Messages are delivered in order (FIFO)</label>
-                </div>
-
-                <h3>6.2 Experiment: Multiple Messages</h3>
-                <p>Try sending multiple messages and observe FIFO ordering:</p>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>echo "Message 1" | sudo -u mqm /opt/mqm/samp/bin/amqsput EVENT.Q1 QM1
-echo "Message 2" | sudo -u mqm /opt/mqm/samp/bin/amqsput EVENT.Q1 QM1
-echo "Message 3" | sudo -u mqm /opt/mqm/samp/bin/amqsput EVENT.Q1 QM1
-
-# Retrieve all messages
-sudo -u mqm /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1</code></pre>
-                </div>
-
-                <h3>6.3 Experiment: Check Queue Depth</h3>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>sudo -u mqm bash -c "echo 'DISPLAY QLOCAL(EVENT.Q1) CURDEPTH' | runmqsc QM1"</code></pre>
-                </div>
-
-                <h3>6.4 Experiment: Browse Messages</h3>
-                <p>View messages without removing them from the queue:</p>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>sudo -u mqm /opt/mqm/samp/bin/amqsbcg EVENT.Q1 QM1</code></pre>
+                    <label><input type="checkbox"> SSH connection to VM working</label>
+                    <label><input type="checkbox"> AGENT_TASK_SPEC.md downloaded to VM</label>
+                    <label><input type="checkbox"> Spec given to Bob and Bob ran to completion</label>
+                    <label><input type="checkbox"> All 4 scripts present with -rwxr-xr-x permissions</label>
+                    <label><input type="checkbox"> check-build-status.sh shows IBM MQ 9.4.0.0</label>
+                    <label><input type="checkbox"> check-build-status.sh shows QM1 STATUS(Running)</label>
+                    <label><input type="checkbox"> check-build-status.sh shows EVENT.Q1 CURDEPTH(0)</label>
                 </div>
             </div>
         </section>
@@ -418,73 +330,95 @@ sudo -u mqm /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1</code></pre>
         <!-- Troubleshooting Section -->
         <section id="troubleshooting" class="section">
             <h2>Troubleshooting</h2>
-            
+
             <div class="troubleshooting-item">
                 <h3>Cannot connect via SSH</h3>
                 <ul>
-                    <li>Verify key file permissions: <code>chmod 600 your-key-file.pem</code></li>
-                    <li>Check server IP/hostname is correct</li>
-                    <li>Verify VPN connection if required</li>
-                    <li>Contact event support for connection details verification</li>
+                    <li>Run <code>chmod 600 your-key-file.pem</code> — SSH rejects keys with loose permissions</li>
+                    <li>Double-check the server IP and username from your connection details email</li>
+                    <li>If your organisation requires a VPN, confirm it is connected before trying SSH</li>
+                    <li>Contact event support with the exact error message SSH printed</li>
                 </ul>
             </div>
 
             <div class="troubleshooting-item">
-                <h3>Download fails or is very slow</h3>
+                <h3>Download is very slow or fails</h3>
                 <ul>
-                    <li>Check internet connectivity: <code>ping ibm.com</code></li>
-                    <li>Try alternative download mirror if provided</li>
-                    <li>Contact facilitator for pre-staged installation files</li>
+                    <li>Check internet access from the VM: <code>ping -c 3 ibm.com</code></li>
+                    <li>If ping fails, ask your facilitator — the VM may need a proxy configured</li>
+                    <li>Ask your facilitator if a pre-staged copy of the installer is available on the VM</li>
                 </ul>
             </div>
 
             <div class="troubleshooting-item">
-                <h3>Installation fails</h3>
+                <h3>RPM installation fails</h3>
                 <ul>
-                    <li>Verify sudo access: <code>sudo -v</code></li>
-                    <li>Check disk space: <code>df -h</code></li>
-                    <li>Review error messages carefully</li>
-                    <li>Contact event support with error output</li>
+                    <li>Confirm you accepted the license first: <code>cd ~/mq-install/MQServer && sudo ./mqlicense.sh -accept</code></li>
+                    <li>Check you have disk space: <code>df -h ~</code> (need at least 2 GB free)</li>
+                    <li>Confirm sudo works: <code>sudo -v</code></li>
+                    <li>Paste the exact error line to event support</li>
                 </ul>
             </div>
 
             <div class="troubleshooting-item">
-                <h3>Queue manager won't start</h3>
+                <h3>Queue manager QM1 will not start</h3>
                 <ul>
-                    <li>Check if already running: <code>sudo -u mqm dspmq</code></li>
-                    <li>View error logs: <code>sudo cat /var/mqm/qmgrs/QM1/errors/AMQERR01.LOG</code></li>
-                    <li>Verify mqm user exists: <code>id mqm</code></li>
-                    <li>Check permissions: <code>ls -la /var/mqm</code></li>
+                    <li>Check the MQ error log for the specific reason: <code>sudo tail -50 /var/mqm/qmgrs/QM1/errors/AMQERR01.LOG</code></li>
+                    <li>Verify the mqm user exists: <code>id mqm</code></li>
+                    <li>Verify permissions on the data directory: <code>ls -la /var/mqm</code> — should be owned by mqm</li>
+                    <li>If QM1 was never created, run: <code>sudo -u mqm crtmqm QM1</code></li>
                 </ul>
             </div>
 
             <div class="troubleshooting-item">
-                <h3>Cannot send/receive messages</h3>
+                <h3>amqsput or amqsget fails</h3>
                 <ul>
-                    <li>Verify queue manager is running: <code>sudo -u mqm dspmq</code></li>
-                    <li>Check queue exists: <code>sudo -u mqm bash -c "echo 'DISPLAY QLOCAL(EVENT.Q1)' | runmqsc QM1"</code></li>
-                    <li>Verify user permissions: <code>groups</code> (should include mqm)</li>
-                    <li>Try recreating the queue</li>
+                    <li>Confirm QM1 is running: <code>sudo -u mqm dspmq</code></li>
+                    <li>Confirm EVENT.Q1 exists: <code>sudo -u mqm bash -c "echo 'DISPLAY QLOCAL(EVENT.Q1)' | runmqsc QM1"</code></li>
+                    <li>If the queue is missing, recreate it: <code>sudo -u mqm bash -c "echo 'DEFINE QLOCAL(EVENT.Q1) REPLACE' | runmqsc QM1"</code></li>
+                </ul>
+            </div>
+
+            <div class="troubleshooting-item">
+                <h3>A script gives "Permission denied" when you run it</h3>
+                <ul>
+                    <li>The script is not executable. Fix it: <code>chmod +x ~/the-script-name.sh</code></li>
                 </ul>
             </div>
 
             <div class="warning-box">
                 <strong>Need Help?</strong><br>
-                Contact event support through the designated channel (Teams/Slack) with:
+                Contact event support through the designated channel (Teams/Slack). Include:
                 <ul>
-                    <li>Your username/VM identifier</li>
-                    <li>The step where you encountered the issue</li>
-                    <li>Complete error message or command output</li>
-                    <li>What you've already tried</li>
+                    <li>Your username and VM hostname (from <code>whoami</code> and <code>hostname</code>)</li>
+                    <li>The exact step number and sub-step where you are stuck</li>
+                    <li>The complete output of the failed command — copy and paste it, do not paraphrase</li>
                 </ul>
             </div>
         </section>
 
-        <!-- Useful Commands Reference -->
+        <!-- Quick Reference -->
         <section id="reference" class="section">
             <h2>Quick Reference</h2>
-            
+
             <div class="reference-grid">
+                <div class="reference-card">
+                    <h3>Your 4 Scripts</h3>
+                    <div class="code-block">
+                        <pre><code># Start MQ
+~/start-mq-demo.sh
+
+# Stop MQ
+~/stop-mq-demo.sh
+
+# Check status
+~/check-build-status.sh
+
+# Full cleanup (destructive)
+~/cleanup-mq-demo.sh</code></pre>
+                    </div>
+                </div>
+
                 <div class="reference-card">
                     <h3>Queue Manager Commands</h3>
                     <div class="code-block">
@@ -500,81 +434,63 @@ sudo -u mqm endmqm QM1</code></pre>
                 </div>
 
                 <div class="reference-card">
-                    <h3>Queue Operations</h3>
-                    <div class="code-block">
-                        <pre><code># Create queue
-echo 'DEFINE QLOCAL(MYQUEUE)' | sudo -u mqm runmqsc QM1
-
-# Display queue
-echo 'DISPLAY QLOCAL(MYQUEUE)' | sudo -u mqm runmqsc QM1
-
-# Check depth
-echo 'DISPLAY QLOCAL(MYQUEUE) CURDEPTH' | sudo -u mqm runmqsc QM1</code></pre>
-                    </div>
-                </div>
-
-                <div class="reference-card">
                     <h3>Messaging Commands</h3>
                     <div class="code-block">
-                        <pre><code># Send message
-echo "text" | sudo -u mqm /opt/mqm/samp/bin/amqsput QUEUE QM1
+                        <pre><code># Send a message
+echo "text" | sudo -u mqm \
+  /opt/mqm/samp/bin/amqsput EVENT.Q1 QM1
 
-# Receive message
-sudo -u mqm /opt/mqm/samp/bin/amqsget QUEUE QM1
+# Receive a message (destructive)
+sudo -u mqm \
+  /opt/mqm/samp/bin/amqsget EVENT.Q1 QM1
 
-# Browse messages
-sudo -u mqm /opt/mqm/samp/bin/amqsbcg QUEUE QM1</code></pre>
+# Browse messages (non-destructive)
+sudo -u mqm \
+  /opt/mqm/samp/bin/amqsbcg EVENT.Q1 QM1</code></pre>
                     </div>
                 </div>
 
                 <div class="reference-card">
-                    <h3>System Commands</h3>
+                    <h3>Queue Operations</h3>
                     <div class="code-block">
-                        <pre><code># Check MQ version
-dspmqver
+                        <pre><code># Create a queue
+echo 'DEFINE QLOCAL(EVENT.Q1) REPLACE' \
+  | sudo -u mqm runmqsc QM1
 
-# View error logs
-sudo cat /var/mqm/qmgrs/QM1/errors/AMQERR01.LOG
+# Check queue depth
+echo 'DISPLAY QLOCAL(EVENT.Q1) CURDEPTH' \
+  | sudo -u mqm runmqsc QM1
 
-# Check disk space
-df -h</code></pre>
+# List all queues
+echo 'DISPLAY QLOCAL(*)' \
+  | sudo -u mqm runmqsc QM1</code></pre>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Next Steps Section -->
+        <!-- What You've Learned -->
         <section id="next-steps" class="section">
             <h2>What You've Learned</h2>
             <div class="info-box">
                 <h3>Core Concepts</h3>
                 <ul>
-                    <li><strong>Queue Manager</strong> - The MQ service that manages queues and routes messages</li>
-                    <li><strong>Queue</strong> - A storage location for messages (like a mailbox)</li>
-                    <li><strong>Message</strong> - Data sent between applications</li>
-                    <li><strong>PUT</strong> - Sending a message to a queue</li>
-                    <li><strong>GET</strong> - Retrieving and removing a message from a queue</li>
-                    <li><strong>BROWSE</strong> - Viewing messages without removing them</li>
-                    <li><strong>FIFO</strong> - First In, First Out message ordering</li>
-                </ul>
-
-                <h3>Technical Skills</h3>
-                <ul>
-                    <li>LinuxONE system administration</li>
-                    <li>IBM MQ installation and configuration</li>
-                    <li>Queue manager operations</li>
-                    <li>Message queue management</li>
-                    <li>Enterprise messaging patterns</li>
+                    <li><strong>Queue Manager (QM1)</strong> — the MQ service that owns queues and routes messages between applications</li>
+                    <li><strong>Queue (EVENT.Q1)</strong> — a named storage location for messages; like a mailbox that holds messages until they are collected</li>
+                    <li><strong>PUT</strong> — placing a message on a queue (amqsput); the sender does not need to know who will read it or when</li>
+                    <li><strong>GET</strong> — retrieving and removing a message from a queue (amqsget); the message is gone after this</li>
+                    <li><strong>BROWSE</strong> — reading a message without removing it (amqsbcg); useful for debugging and monitoring</li>
+                    <li><strong>FIFO</strong> — messages come out in the same order they went in: First In, First Out</li>
+                    <li><strong>Persistence</strong> — messages are written to disk inside <code>/var/mqm</code> and survive a restart</li>
                 </ul>
 
                 <h3>Real-World Applications</h3>
-                <p>The skills you've learned apply to:</p>
+                <p>The pattern you practised — put a message, queue holds it, get the message — is used in production at scale:</p>
                 <ul>
-                    <li><strong>E-commerce:</strong> Order processing systems</li>
-                    <li><strong>Banking:</strong> Transaction processing</li>
-                    <li><strong>Healthcare:</strong> Patient data exchange</li>
-                    <li><strong>IoT:</strong> Sensor data collection</li>
-                    <li><strong>Microservices:</strong> Service-to-service communication</li>
+                    <li><strong>Banking:</strong> Transaction events are queued so no payment is lost even if a downstream system is temporarily unavailable</li>
+                    <li><strong>Healthcare:</strong> Patient records are exchanged between hospitals via queues that guarantee delivery</li>
+                    <li><strong>E-commerce:</strong> Order confirmations, inventory updates, and shipping notifications all flow through message queues</li>
+                    <li><strong>Microservices:</strong> Independent services communicate asynchronously through queues instead of calling each other directly</li>
                 </ul>
             </div>
         </section>

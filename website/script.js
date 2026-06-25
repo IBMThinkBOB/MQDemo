@@ -86,11 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     sections.forEach(section => observer.observe(section));
     
-    // Add print functionality
-    const printBtn = document.createElement('button');
-    printBtn.textContent = '🖨️ Print Guide';
-    printBtn.className = 'print-btn';
-    printBtn.style.cssText = `
+    // Add download spec button
+    const downloadBtn = document.createElement('a');
+    downloadBtn.textContent = 'Download Agent Spec';
+    downloadBtn.className = 'print-btn';
+    downloadBtn.href = '../AGENT_TASK_SPEC.md';
+    downloadBtn.download = 'AGENT_TASK_SPEC.md';
+    downloadBtn.style.cssText = `
         position: fixed;
         bottom: 20px;
         right: 20px;
@@ -104,17 +106,18 @@ document.addEventListener('DOMContentLoaded', () => {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         z-index: 1000;
         transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
     `;
-    printBtn.addEventListener('click', () => window.print());
-    printBtn.addEventListener('mouseenter', () => {
-        printBtn.style.background = '#0043ce';
-        printBtn.style.transform = 'translateY(-2px)';
+    downloadBtn.addEventListener('mouseenter', () => {
+        downloadBtn.style.background = '#0043ce';
+        downloadBtn.style.transform = 'translateY(-2px)';
     });
-    printBtn.addEventListener('mouseleave', () => {
-        printBtn.style.background = '#0f62fe';
-        printBtn.style.transform = 'translateY(0)';
+    downloadBtn.addEventListener('mouseleave', () => {
+        downloadBtn.style.background = '#0f62fe';
+        downloadBtn.style.transform = 'translateY(0)';
     });
-    document.body.appendChild(printBtn);
+    document.body.appendChild(downloadBtn);
     
     // Add scroll-to-top button
     const scrollTopBtn = document.createElement('button');
@@ -216,10 +219,13 @@ function resetProgress() {
 
 // Add keyboard shortcuts
 document.addEventListener('keydown', (e) => {
-    // Ctrl/Cmd + P for print
-    if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+    // Ctrl/Cmd + D to download spec
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
         e.preventDefault();
-        window.print();
+        const a = document.createElement('a');
+        a.href = '../AGENT_TASK_SPEC.md';
+        a.download = 'AGENT_TASK_SPEC.md';
+        a.click();
     }
     
     // Ctrl/Cmd + Home to scroll to top
@@ -358,7 +364,7 @@ function showHelp() {
         <h3>Keyboard Shortcuts</h3>
         <ul style="list-style: none; padding: 0;">
             <li style="margin: 10px 0;"><strong>Ctrl/Cmd + K</strong> - Jump to section</li>
-            <li style="margin: 10px 0;"><strong>Ctrl/Cmd + P</strong> - Print guide</li>
+            <li style="margin: 10px 0;"><strong>Ctrl/Cmd + D</strong> - Download Agent Spec</li>
             <li style="margin: 10px 0;"><strong>Ctrl/Cmd + Home</strong> - Scroll to top</li>
         </ul>
         <h3 style="margin-top: 20px;">Tips</h3>
