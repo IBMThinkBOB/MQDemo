@@ -92,19 +92,26 @@
                 </div>
                 <p class="note">Your browser will download the <code>.pem</code> key file. Save it somewhere you can find it — you will need it in the next step.</p>
 
-                <h3>1.2 Connect via SSH</h3>
+                <h3>1.2 Set Your Key Permissions</h3>
+                <p>Before connecting, set the correct permissions on your key file — SSH will refuse to use a key that is too open:</p>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code>chmod 600 /path/to/your-key-file.pem</code></pre>
+                </div>
+
+                <h3>1.3 Connect via SSH</h3>
                 <p>Now use your key file to connect. Replace the placeholders with the values from your secure connection details email:</p>
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>ssh -i /path/to/your-key-file.pem username@your-server-ip</code></pre>
+                    <pre><code>ssh -i /path/to/your-key-file.pem linux1@your-server-ip</code></pre>
                 </div>
                 <div class="info-box">
                     <p><strong>Example of what a real command looks like:</strong></p>
-                    <code>ssh -i ~/.ssh/linuxone-lab.pem student01@192.168.1.100</code>
-                    <p style="margin-top:8px">The <code>-i</code> flag tells SSH which key file to use. <code>student01</code> is the username. <code>192.168.1.100</code> is the server address. Yours will differ.</p>
+                    <code>ssh -i ~/.ssh/linuxone-lab.pem linux1@192.168.1.100</code>
+                    <p style="margin-top:8px">The <code>-i</code> flag tells SSH which key file to use. <code>linux1</code> is the username. <code>192.168.1.100</code> is the server address. Yours will differ.</p>
                 </div>
 
-                <h3>1.3 Accept the Host Fingerprint</h3>
+                <h3>1.4 Accept the Host Fingerprint</h3>
                 <p>On your very first connection, SSH does not yet know this server. It will ask you to confirm its identity:</p>
                 <div class="code-block">
                     <pre><code>The authenticity of host '192.168.1.100' can't be established.
