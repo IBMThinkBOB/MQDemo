@@ -85,7 +85,11 @@
                 <p>Your VM is a Linux server running on IBM LinuxONE hardware. You access it over the internet using SSH — a secure, encrypted terminal connection. Think of it as opening a command prompt that runs directly on your remote server.</p>
 
                 <h3>1.1 Claim Your SSH Key</h3>
-                <p>The keys are titled <strong>oma#</strong> — please use the key information you were handed.</p>
+                <p>The keys are titled <strong>oma#</strong> — please use the key information you were handed. Navigate to the URL below in your browser, replacing <code>#</code> with your key number:</p>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre><code>https://marist.ddns.net/sshkeys/oma#.pem</code></pre>
+                </div>
 
                 <h3>1.2 Set Your Key Permissions</h3>
                 <p>Before connecting, set the correct permissions on your key file — SSH will refuse to use a key that is too open:</p>
@@ -96,7 +100,7 @@
                 <p class="note">If you are on Windows you may have to use <code>.ppk</code>. If <code>.pem</code> doesn't work, please try that.</p>
 
                 <h3>1.3 Connect via SSH</h3>
-                <p>Now use your key file to connect. Replace the placeholders with the values from your secure connection details email:</p>
+                <p>Now use your key file to connect. Replace the placeholders with the values from your secure connection details from the information you were handed:</p>
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre><code>ssh -i /path/to/your-key-file.pem linux1@your-server-ip</code></pre>
@@ -154,7 +158,7 @@ Are you sure you want to continue connecting (yes/no)?</code></pre>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     <pre><code>whoami</code></pre>
                 </div>
-                <p class="expected-output"><strong>Expected:</strong> Your username (e.g. <code>student01</code>)</p>
+                <p class="expected-output"><strong>Expected:</strong> Your username (e.g. <code>linux1</code>)</p>
 
                 <h3>2.2 Confirm the VM Can Reach the Internet</h3>
                 <p>The MQ installer will be downloaded from IBM's servers. Confirm connectivity now:</p>
@@ -213,13 +217,8 @@ Are you sure you want to continue connecting (yes/no)?</code></pre>
                 <h3>4.1 Open Bob</h3>
                 <p>Open the Bob AI agent interface in your browser or terminal. Your facilitator will provide the access URL or launch command for your event.</p>
 
-                <h3>4.2 Read the Spec into Your Clipboard</h3>
-                <p>On your LinuxONE VM, print the spec so you can copy it:</p>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre><code>cat ~/AGENT_TASK_SPEC.md</code></pre>
-                </div>
-                <p>Select all of the output and copy it.</p>
+                <h3>4.2 Drag the Agent Spec into Your Left Hand Directory of Bob</h3>
+                <p>Drag the <code>AGENT_TASK_SPEC.md</code> file from your downloads folder into the left hand directory panel of Bob.</p>
 
                 <h3>4.3 Paste Into Bob With This Prompt</h3>
                 <p>Paste the following message into Bob, then attach <code>AGENT_TASK_SPEC.md</code> from your downloads folder:</p>
@@ -230,6 +229,14 @@ Please execute the following agent task specification exactly as written.
 Run each task in @AGENT_TASK_SPEC.md order, verify the output matches the acceptance criteria after each task,
 and do not proceed to the next task until the current one passes.
 When all tasks are complete, run the final verification command and confirm all 4 scripts exist.</code></pre>
+                </div>
+                <div class="info-box">
+                    <p><strong>If Bob asks you for credentials:</strong></p>
+                    <ul>
+                        <li>Your SSH key is the <code>.pem</code> file</li>
+                        <li>Your username is <code>linux1</code></li>
+                        <li>Your IP is on the card you were given</li>
+                    </ul>
                 </div>
 
                 <h3>4.4 Monitor Bob's Progress</h3>
